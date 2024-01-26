@@ -2240,9 +2240,7 @@ class OpenBezoarAdapter(BaseModelAdapter):
     use_fast_tokenizer = False
 
     def match(self, model_path: str):
-        return any(
-            model_path == "chansurgeplus/open_llama_3b_v2_dpo_hh_rlhf_100k"
-        )
+        return model_path == "chansurgeplus/open_llama_3b_v2_dpo_hh_rlhf_100k"
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         quantization_config = BitsAndBytesConfig(
