@@ -2256,8 +2256,7 @@ class OpenBezoarAdapter(BaseModelAdapter):
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
             device_map='auto',
-            torch_dtype=torch.float16,
-            quantization_config=quantization_config
+            quantization_config=quantization_config,
             **from_pretrained_kwargs,
         ).eval()
         return model, tokenizer
