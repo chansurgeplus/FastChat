@@ -2249,7 +2249,7 @@ class OpenBezoarAdapter(BaseModelAdapter):
             bnb_4bit_use_double_quant=True,
             bnb_4bit_compute_dtype=torch.bfloat16
         )
-        from_pretrained_kwargs["torch_dtype"] = torch.float16
+        # from_pretrained_kwargs["torch_dtype"] = torch.float16
 
         tokenizer = AutoTokenizer.from_pretrained(
             model_path
@@ -2257,7 +2257,6 @@ class OpenBezoarAdapter(BaseModelAdapter):
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
             device_map='auto',
-            quantization_config=quantization_config,
             **from_pretrained_kwargs,
         ).eval()
         return model, tokenizer
