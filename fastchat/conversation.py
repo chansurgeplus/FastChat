@@ -61,6 +61,14 @@ class Conversation:
 
     def get_prompt(self) -> str:
         """Get the prompt for generation."""
+        if self.name == "openbezoar":
+            dialogue = ""
+            for role, message in self.messages:
+                if message:
+                    dialogue += role + ": " + message + "\n"
+            prompt = self.system_template.format(dialogue=dialogue)
+            return prompt
+
         system_prompt = self.system_template.format(system_message=self.system_message)
         if self.sep_style == SeparatorStyle.ADD_COLON_SINGLE:
             ret = system_prompt + self.sep
@@ -1486,6 +1494,16 @@ register_conv_template(
         sep_style=SeparatorStyle.NO_COLON_SINGLE,
         sep="<sep>",
         stop_str="<eod>",
+    )
+)
+
+# OpenBezoar Template
+register_conv_template(
+    Conversation(
+        name="openbezoar",
+        system_template="### System:\nContinue the following conversation with turns between a human and an assistant provided as context with a single assistant turn only.\n\n### Context:\n{dialogue}\n\n### Response:\n",
+        system_message="",
+        roles=("Human", "Assistant")
     )
 )
 

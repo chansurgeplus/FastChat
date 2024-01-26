@@ -24,6 +24,7 @@ from transformers import (
     LlamaForCausalLM,
     T5Tokenizer,
 )
+from transformers import BitsAndBytesConfig
 
 from fastchat.constants import CPU_ISA
 from fastchat.conversation import Conversation, get_conv_template
@@ -2233,6 +2234,39 @@ class YuanAdapter(BaseModelAdapter):
         return get_conv_template("yuan")
 
 
+class OpenBezoarAdapter(BaseModelAdapter):
+    """Model adapter for OpenBezoar Models"""
+
+    use_fast_tokenizer = False
+
+    def match(self, model_path: str):
+        return any(
+            model_path == "chansurgeplus/open_llama_3b_v2_dpo_hh_rlhf_100k"
+        )
+
+    def load_model(self, model_path: str, from_pretrained_kwargs: dict):
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.bfloat16
+        )
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_path
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            device_map='auto',
+            torch_dtype=torch.float16,
+            quantization_config=quantization_config
+            **from_pretrained_kwargs,
+        ).eval()
+        return model, tokenizer
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("openbezoar")
+
 # Note: the registration order matters.
 # The one registered earlier has a higher matching priority.
 register_model_adapter(PeftModelAdapter)
@@ -2321,6 +2355,7 @@ register_model_adapter(BagelAdapter)
 register_model_adapter(SolarAdapter)
 register_model_adapter(LlavaAdapter)
 register_model_adapter(YuanAdapter)
+register_model_adapter(OpenBezoarAdapter)
 
 # After all adapters, try the default base adapter.
 register_model_adapter(BaseModelAdapter)
