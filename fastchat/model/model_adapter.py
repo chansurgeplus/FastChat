@@ -2240,7 +2240,7 @@ class OpenBezoarAdapter(BaseModelAdapter):
     use_fast_tokenizer = False
 
     def match(self, model_path: str):
-        return "open_llama_3b_v2_" in model_path
+        return "open_llama_3b_v2_" in model_path or "open-llama-v2-" in model_path
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         quantization_config = BitsAndBytesConfig(
