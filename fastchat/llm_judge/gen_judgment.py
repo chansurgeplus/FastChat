@@ -181,6 +181,7 @@ if __name__ == "__main__":
         help="The file of judge prompts.",
     )
     parser.add_argument("--answer-dir", type=str, help="The output answer folder.")
+    parser.add_argument("--ref-answer-dir", type=str, help="The output reference answer folder.")
     parser.add_argument("--judge-model", type=str, default="gpt-4")
     parser.add_argument("--baseline-model", type=str, default="gpt-3.5-turbo")
     parser.add_argument(
@@ -215,7 +216,10 @@ if __name__ == "__main__":
         answer_dir = args.answer_dir
     else:
         answer_dir = f"data/{args.bench_name}/model_answer"
-    ref_answer_dir = f"data/{args.bench_name}/reference_answer"
+    if args.ref_answer_dir:
+        ref_answer_dir = args.ref_answer_dir
+    else:
+        ref_answer_dir = f"data/{args.bench_name}/reference_answer"
 
     # Load questions
     questions = load_questions(question_file, None, None)
