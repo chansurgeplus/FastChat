@@ -2264,6 +2264,28 @@ class OpenBezoarAdapter(BaseModelAdapter):
     def get_default_conv_template(self, model_path: str) -> Conversation:
         return get_conv_template("openbezoar")
 
+class MiniChatAdapter(BaseModelAdapter):
+    """Model adapter for MiniChat Models"""
+
+    use_fast_tokenizer = False
+
+    def match(self, model_path: str):
+        return "MiniChat" in model_path
+
+    def load_model(self, model_path: str, from_pretrained_kwargs: dict):
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_path
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            device_map='auto',
+            **from_pretrained_kwargs,
+        ).eval()
+        return model, tokenizer
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("minichat")
+
 # Note: the registration order matters.
 # The one registered earlier has a higher matching priority.
 register_model_adapter(PeftModelAdapter)
@@ -2353,6 +2375,7 @@ register_model_adapter(SolarAdapter)
 register_model_adapter(LlavaAdapter)
 register_model_adapter(YuanAdapter)
 register_model_adapter(OpenBezoarAdapter)
+register_model_adapter(MiniChatAdapter)
 
 # After all adapters, try the default base adapter.
 register_model_adapter(BaseModelAdapter)

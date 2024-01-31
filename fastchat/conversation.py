@@ -9,7 +9,6 @@ import dataclasses
 from enum import auto, IntEnum
 from typing import List, Any, Dict, Union, Tuple
 
-
 class SeparatorStyle(IntEnum):
     """Separator styles."""
 
@@ -32,6 +31,7 @@ class SeparatorStyle(IntEnum):
     DEEPSEEK_CHAT = auto()
     METAMATH = auto()
     YUAN2 = auto()
+    MINICHAT = auto()
 
 
 @dataclasses.dataclass
@@ -267,6 +267,14 @@ class Conversation:
                 else:
                     ret += ""
             ret = ret.rstrip("<n>") + seps[0]
+            return ret
+        elif self.sep_style == SeparatorStyle.MINICHAT:
+            ret = self.system_message + "</s>"
+            for role, message in self.messages:
+                if message:
+                    ret += role + " " + message + "</s>"
+                else:
+                    ret += role # No space is needed.
             return ret
         else:
             raise ValueError(f"Invalid style: {self.sep_style}")
@@ -1504,6 +1512,17 @@ register_conv_template(
         system_template="### System:\nContinue the following conversation with turns between a human and an assistant provided as context with a single assistant turn only.\n\n### Context:\n{dialogue}\n\n### Response:\n",
         system_message="",
         roles=("Human", "Assistant")
+    )
+)
+
+register_conv_template(
+    Conversation(
+        name="minichat",
+        system_message="",
+        roles=("[|User|]", "[|Assistant|]"),
+        offset=0,
+        sep_style=SeparatorStyle.MINICHAT,
+        sep="</s>",
     )
 )
 
