@@ -1532,7 +1532,19 @@ register_conv_template(
     Conversation(
         name="phi-2-chat",
         system_message="",
-        roles=("Alice", "Bob"),
+        roles=("Bob", "Bob"),
+        offset=0,
+        sep_style=SeparatorStyle.ADD_COLON_SINGLE,
+        sep="\n",
+    )
+)
+
+# RedPajama-INCITE-Chat Template
+register_conv_template(
+    Conversation(
+        name="red-pajama-incite-chat",
+        system_message="",
+        roles=("<human>", "<bot>"),
         offset=0,
         sep_style=SeparatorStyle.ADD_COLON_SINGLE,
         sep="\n",
