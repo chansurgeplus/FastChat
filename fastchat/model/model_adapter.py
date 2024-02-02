@@ -25,6 +25,7 @@ from transformers import (
     T5Tokenizer,
 )
 from transformers import BitsAndBytesConfig
+from peft import PeftModel
 
 from fastchat.constants import CPU_ISA
 from fastchat.conversation import Conversation, get_conv_template
@@ -2270,7 +2271,7 @@ class MiniChatAdapter(BaseModelAdapter):
     use_fast_tokenizer = False
 
     def match(self, model_path: str):
-        return "MiniChat" in model_path
+        return "MiniChat" in model_path or model_path == "rishiraj/smol-3b"
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         tokenizer = AutoTokenizer.from_pretrained(
@@ -2281,10 +2282,36 @@ class MiniChatAdapter(BaseModelAdapter):
             device_map='auto',
             **from_pretrained_kwargs,
         ).eval()
+
         return model, tokenizer
 
     def get_default_conv_template(self, model_path: str) -> Conversation:
         return get_conv_template("minichat")
+
+class Phi2ChatAdapter(BaseModelAdapter):
+    """Model adapter for Phi2 Chat Models"""
+
+    use_fast_tokenizer = False
+
+    def match(self, model_path: str):
+        return "Phi-2" in model_path
+
+    def load_model(self, model_path: str, from_pretrained_kwargs: dict):
+        from_pretrained_kwargs["trust_remote_code"] = True
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            device_map='auto',
+            **from_pretrained_kwargs,
+        ).eval()
+        return model, tokenizer
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("phi-2-chat")
 
 # Note: the registration order matters.
 # The one registered earlier has a higher matching priority.
@@ -2376,6 +2403,7 @@ register_model_adapter(LlavaAdapter)
 register_model_adapter(YuanAdapter)
 register_model_adapter(OpenBezoarAdapter)
 register_model_adapter(MiniChatAdapter)
+register_model_adapter(Phi2ChatAdapter)
 
 # After all adapters, try the default base adapter.
 register_model_adapter(BaseModelAdapter)

@@ -1515,6 +1515,7 @@ register_conv_template(
     )
 )
 
+# MiniChat Model Family Template
 register_conv_template(
     Conversation(
         name="minichat",
@@ -1523,6 +1524,18 @@ register_conv_template(
         offset=0,
         sep_style=SeparatorStyle.MINICHAT,
         sep="</s>",
+    )
+)
+
+# Phi-2 Models Chat Template
+register_conv_template(
+    Conversation(
+        name="phi-2-chat",
+        system_message="",
+        roles=("Alice", "Bob"),
+        offset=0,
+        sep_style=SeparatorStyle.ADD_COLON_SINGLE,
+        sep="\n",
     )
 )
 
