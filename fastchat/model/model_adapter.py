@@ -2328,8 +2328,7 @@ class RedPadjamaInciteChatAdapter(BaseModelAdapter):
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
             device_map='auto',
-            **from_pretrained_kwargs,
-        ).eval()
+        )
         return model, tokenizer
 
     def get_default_conv_template(self, model_path: str) -> Conversation:
