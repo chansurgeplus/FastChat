@@ -1181,7 +1181,7 @@ class RedPajamaINCITEAdapter(BaseModelAdapter):
     """The model adapter for togethercomputer/RedPajama-INCITE-7B-Chat"""
 
     def match(self, model_path: str):
-        return "redpajama-incite" in model_path.lower()
+        return "redpajama-incite-7b" in model_path.lower()
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         revision = from_pretrained_kwargs.get("revision", "main")
@@ -2319,11 +2319,9 @@ class RedPadjamaInciteChatAdapter(BaseModelAdapter):
     use_fast_tokenizer = False
 
     def match(self, model_path: str):
-        print(model_path)
         return "RedPajama-INCITE-Chat" in model_path
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
-        print("LOADING")
         tokenizer = AutoTokenizer.from_pretrained(
             model_path
         )
