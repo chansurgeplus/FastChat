@@ -1551,6 +1551,18 @@ register_conv_template(
     )
 )
 
+# RedPajama-INCITE-Instruct Template
+register_conv_template(
+    Conversation(
+        name="red-pajama-incite-instruct",
+        system_message="",
+        roles=("Q", "A"),
+        offset=0,
+        sep_style=SeparatorStyle.ADD_COLON_SINGLE,
+        sep="\n",
+    )
+)
+
 if __name__ == "__main__":
     from fastchat.conversation import get_conv_template
 
