@@ -2294,7 +2294,7 @@ class Phi2ChatAdapter(BaseModelAdapter):
     use_fast_tokenizer = False
 
     def match(self, model_path: str):
-        return "Phi-2" in model_path
+        return "phi-2" in model_path.lower()
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         from_pretrained_kwargs["trust_remote_code"] = True
