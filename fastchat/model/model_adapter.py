@@ -2334,6 +2334,27 @@ class RedPadjamaInciteChatAdapter(BaseModelAdapter):
     def get_default_conv_template(self, model_path: str) -> Conversation:
         return get_conv_template("red-pajama-incite-chat")
 
+class RedPadjamaInciteInstructAdapter(BaseModelAdapter):
+    """Model adapter for RedPadjamaIncite Instruct Models"""
+
+    use_fast_tokenizer = False
+
+    def match(self, model_path: str):
+        return "RedPajama-INCITE-Instruct" in model_path
+
+    def load_model(self, model_path: str, from_pretrained_kwargs: dict):
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_path
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            device_map='auto',
+        )
+        return model, tokenizer
+
+    def get_default_conv_template(self, model_path: str) -> Conversation:
+        return get_conv_template("red-pajama-incite-instruct")
+
 # Note: the registration order matters.
 # The one registered earlier has a higher matching priority.
 register_model_adapter(PeftModelAdapter)
@@ -2426,6 +2447,7 @@ register_model_adapter(OpenBezoarAdapter)
 register_model_adapter(MiniChatAdapter)
 register_model_adapter(Phi2ChatAdapter)
 register_model_adapter(RedPadjamaInciteChatAdapter)
+register_model_adapter(RedPadjamaInciteInstructAdapter)
 
 # After all adapters, try the default base adapter.
 register_model_adapter(BaseModelAdapter)
